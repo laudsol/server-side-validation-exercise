@@ -22,6 +22,47 @@ router.post('/' , (req, res, next) => {
   let email = req.body.users.email;
   let phone = req.body.users.phone;
 
+  let letters = /[a-zA-Z]/
+
+  if (!firstName || firstName.trim() === ''){
+    const err = new Error ('First name must not be blank')
+    err.status = 400;
+    return next(err);
+  } else if (!lastName || lastName.trim() === ''){
+      const err = new Error ('Last name must not be blank')
+      err.status = 400;
+      return next(err);
+  } else if (!username || username.trim() === ''){
+      const err = new Error ('username must not be blank')
+      err.status = 400;
+      return next(err);
+  } else if (!email || email.trim() === ''){
+      const err = new Error ('email must not be blank')
+      err.status = 400;
+      return next(err);
+  } else if (!phone || phone.trim() === ''){
+      const err = new Error ('phone must not be blank')
+      err.status = 400;
+      return next(err);
+  } else if (username.length < 6){
+      const err = new Error ('username must 6 letters or more')
+      err.status = 400;
+      return next(err);
+  } else if (validateUserName(username) === false){
+      const err = new Error ('username must include only letters and numbers')
+      err.status = 400;
+      return next(err);
+  } else if (validateEmail(email) === false){
+      const err = new Error ('must enter a valid email')
+      err.status = 400;
+      return next(err);
+  } else if (phone.length !== 10){
+    const err = new Error ('must enter a valid phone number')
+    err.status = 400;
+    return next(err);
+  }
+
+
   knex('users')
     .insert({
       firstname: firstName,
@@ -38,5 +79,21 @@ router.post('/' , (req, res, next) => {
       next(err);
     });
 });
+
+function validateEmail(email) {
+  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+}
+
+function validateUserName (username){
+  var valid = true;
+  username.split('').forEach(function(el){
+      if (!el.match(/[a-zA-Z0-9]/)){
+        valid = false
+      }
+    })
+    return valid
+}
+
 
 module.exports = router;
