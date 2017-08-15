@@ -11,6 +11,7 @@ router.get('/' , (req, res, next) => {
       res.send(results);
     })
     .catch((err) => {
+      console.log(err)
       res.send(err);
     });
 });
@@ -44,6 +45,10 @@ router.post('/' , (req, res, next) => {
       const err = new Error ('phone must not be blank')
       err.status = 400;
       return next(err);
+  } else if (checkFirstLetterUsername(username) === false){
+        const err = new Error ('username start with a letter')
+        err.status = 400;
+        return next(err);
   } else if (username.length < 6){
       const err = new Error ('username must 6 letters or more')
       err.status = 400;
@@ -95,5 +100,9 @@ function validateUserName (username){
     return valid
 }
 
+function checkFirstLetterUsername(username){
+  var letters = /[a-zA-Z]/;
+  return letters.test(username[0]);
+}
 
 module.exports = router;
